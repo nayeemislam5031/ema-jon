@@ -1,9 +1,11 @@
 /* eslint-disable no-undef */
 import React from 'react';
+import'./Review.css';
 import { useEffect, useState } from 'react';
-import {getStoredCart} from '../../utilities/fakedb';
+import {getStoredCart,deleteFromDb} from '../../utilities/fakedb';
 import fakeData from '../../fakeData/products.json';
 import Reviewitem from '../Reviewitem/Reviewitem';
+import Cart from '../Cart/Cart';
 
 
 
@@ -11,6 +13,12 @@ import Reviewitem from '../Reviewitem/Reviewitem';
 
 const Review = () => {
     const [cart, setCart] = useState([]);
+
+    const handleremoveProduct = (productkey) => {
+        const newCart = cart.filter(pd => pd.key !== productkey);
+        setCart(newCart);
+        deleteFromDb(productkey);
+    }
     useEffect(()=>{
         //cart
         const savedCart = getStoredCart();
@@ -23,17 +31,25 @@ const Review = () => {
         setCart(cartProducts);
     },[])
     return (
-        <div>
-            <h1>
+        <div className="review-container">
+            
                 
+            <div className="review-product-container">
                 {
                     cart.map(pd => <Reviewitem 
                         key = {pd.key}
+                        removeProduct = {handleremoveProduct}
                         product = {pd}></Reviewitem> )
                 }
+            </div>
+
+            <div className="cart-container">
+                <Cart cart={cart}></Cart>
+            </div>
+                
                 
 
-            </h1>
+            
         </div>
     );
 };
